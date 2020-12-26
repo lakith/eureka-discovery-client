@@ -10,7 +10,7 @@ function serviceDiscovery(eurekaServerData) {
 }
 
 function getInstanceData() {
-  return getData
+  return getData()
 }
 
 module.exports = {

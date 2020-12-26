@@ -4,31 +4,32 @@ const eventEmitter = require('../config/events/events')
 
 let hartbeatInterval = 0
 
-const connectEureka = async (eurekaServerData) => {
-    const instanceID = `${eurekaServerData.HOST || 'localhost'}:${eurekaServerData.APP_NAME || 'userService'}:${eurekaServerData.PORT || 3000}`
-    const eurekaHost = `${eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData.EUREKA_HOST || 'localhost:8761'}/eureka/apps/${eurekaServerData.APP_NAME || 'userService'}`;
+const connectEureka = async (eurekaServerData = null) => {
+
+    const instanceID = `${eurekaServerData && eurekaServerData.HOST || 'localhost'}:${eurekaServerData && eurekaServerData.APP_NAME || 'userService'}:${eurekaServerData && eurekaServerData.PORT || 3000}`;
+    const eurekaHost = `${eurekaServerData && eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData && eurekaServerData.EUREKA_HOST || 'localhost:8761'}/eureka/apps/${eurekaServerData && eurekaServerData.APP_NAME || 'userService'}`;
     await eurekaRegister(instanceID, eurekaHost, eurekaServerData)
 }
 
-const eurekaRegister = async (instanceID, eurekaHost, eurekaServerData) => {
+const eurekaRegister = async (instanceID, eurekaHost, eurekaServerData = null) => {
     const dataSet = {
         instance: {
-            hostName: `${eurekaServerData.HOST || 'localhost'}:${eurekaServerData.PORT || 3000}`,
+            hostName: `${eurekaServerData && eurekaServerData.HOST || 'localhost'}:${ eurekaServerData && eurekaServerData.PORT || 3000}`,
             instanceId: instanceID,
-            app: `${eurekaServerData.APP_NAME || 'userService'}`,
-            vipAddress: `${eurekaServerData.VIP_ADDRESS}`,
-            ipAddr: `${eurekaServerData.IP_ADDR || 'jq.test.userService.com'}`,
-            status: `${eurekaServerData.STATUS || 'UP'}`,
+            app: `${eurekaServerData && eurekaServerData.APP_NAME || 'userService'}`,
+            vipAddress: `${eurekaServerData && eurekaServerData.VIP_ADDRESS}`,
+            ipAddr: `${eurekaServerData && eurekaServerData.IP_ADDR || 'jq.test.userService.com'}`,
+            status: `${eurekaServerData && eurekaServerData.STATUS || 'UP'}`,
             port: {
-                '$': `${eurekaServerData.PORT || 3000}`,
+                '$': `${eurekaServerData && eurekaServerData.PORT || 3000}`,
                 '@enabled': true
             },
-            healthCheckUrl: `${eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData.HOST || 'localhost'}:${eurekaServerData.PORT || 3000}/api/health/`,
-            statusPageUrl: `${eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData.HOST || 'localhost'}:${eurekaServerData.PORT || 3000}/api/status/`,
-            homePageUrl: `${eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData.HOST || 'localhost'}:${eurekaServerData.PORT || 3000}/api/`,
+            healthCheckUrl: `${eurekaServerData && eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData && eurekaServerData.HOST || 'localhost'}:${eurekaServerData && eurekaServerData.PORT || 3000}/api/health/`,
+            statusPageUrl: `${eurekaServerData && eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData && eurekaServerData.HOST || 'localhost'}:${eurekaServerData && eurekaServerData.PORT || 3000}/api/status/`,
+            homePageUrl: `${eurekaServerData && eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData && eurekaServerData.HOST || 'localhost'}:${eurekaServerData && eurekaServerData.PORT || 3000}/api/`,
             dataCenterInfo: {
-                '@class': `${eurekaServerData.DATA_CENTER_INFO_CLASS || 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo'}`,
-                'name': `${eurekaServerData.DATA_CENTER_INFO_NAME || 'MyOwn'}`
+                '@class': `${eurekaServerData && eurekaServerData.DATA_CENTER_INFO_CLASS || 'com.netflix.appinfo.InstanceInfo$DefaultDataCenterInfo'}`,
+                'name': `${eurekaServerData && eurekaServerData.DATA_CENTER_INFO_NAME || 'MyOwn'}`
             }
         }
     };
@@ -53,7 +54,7 @@ const eurekaHartBeat = async (eurekaHost, instanceID) => {
         try {
             await axios.put(`${eurekaHost}/${instanceID}`)
             eventEmitter.emit('eureka-hartbeat-successfull');
-            // logger.info("Eureka HartBeat Success")
+            logger.info("Eureka HartBeat Success")
         } catch (error) {
             logger.error(error);
             eventEmitter.emit('eureka-hartbeat-fail');

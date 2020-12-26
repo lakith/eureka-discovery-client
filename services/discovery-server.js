@@ -1,14 +1,14 @@
 const axios = require('axios').default;
-const logger = require('../config/logger/logger')
+// const logger = require('../config/logger/logger')
 const eventEmitter = require('../config/events/events');
 
 let serverList = []
 let syncStatus = false
 let serverRoundRobinIndexes = {}
 
-const discoveryServer = async (eurekaServerData) => {
+const discoveryServer = async (eurekaServerData = null) => {
     eventEmitter.on('eureka-hartbeat-successfull', async () => {
-        const eurekaHost = `${eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData.EUREKA_HOST || 'localhost:8761'}/eureka/apps/`;
+        const eurekaHost = `${eurekaServerData && eurekaServerData.SSL ? 'https' : 'http'}://${eurekaServerData && eurekaServerData.EUREKA_HOST || 'localhost:8761'}/eureka/apps/`;
         try {
             let eurekaResponse = await axios.get(eurekaHost)
             syncStatus = true
@@ -29,7 +29,7 @@ const discoveryServer = async (eurekaServerData) => {
 
         } catch (error) {
             syncStatus = false
-            logger.error(error)
+            // logger.error(error)
         }
     })
 
