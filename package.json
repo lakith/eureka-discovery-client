@@ -1,0 +1,15 @@
+{
+  "name": "discovery-client-eureka",
+  "version": "1.0.0",
+  "description": "A simple discovery client for Eureka",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bunyan": "^1.8.14",
+    "bunyan-format": "^0.2.1"
+  }
+}
